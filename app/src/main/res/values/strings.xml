@@ -5,4 +5,14 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <!-- TITLES -->
+    <string name="title_lastOutActivity">Last Movies Out</string>
+
+    <!-- ERRORS -->
+    <!-- Http -->
+    <string name="error_resourceNotFound">Requested resource not found</string>
+    <string name="error_serveurError">Something went wrong at server end</string>
+    <string name="error_unexpectedError">Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]</string>
+
 </resources>

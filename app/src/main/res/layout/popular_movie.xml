@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2">
+
+        <TextView
+            android:id="@+id/textView_popularMovieTitle"
+            android:text=""
+            android:layout_columnSpan="2"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:paddingLeft="8dp"/>
+
+        <ImageView
+            android:id="@+id/imageView_popularMoviePoster"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/textView_popularMovieDescription"
+            android:text=""
+            android:layout_marginBottom="12dp"/>
+
+    </GridLayout>
+
+</android.support.constraint.ConstraintLayout>

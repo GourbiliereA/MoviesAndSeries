@@ -9,7 +9,7 @@
     tools:openDrawer="start">
 
     <include
-        layout="@layout/app_bar_last_out"
+        layout="@layout/app_bar_popular_movies"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_last_out"
+        app:headerLayout="@layout/nav_header_popular_movies"
         app:menu="@menu/activity_last_out_drawer" />
 
 </android.support.v4.widget.DrawerLayout>
