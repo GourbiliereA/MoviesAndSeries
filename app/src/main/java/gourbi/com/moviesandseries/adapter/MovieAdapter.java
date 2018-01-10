@@ -2,6 +2,8 @@ package gourbi.com.moviesandseries.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 
 import gourbi.com.moviesandseries.R;
@@ -22,6 +26,7 @@ import gourbi.com.moviesandseries.utils.DownloadImageTask;
 public class MovieAdapter extends ArrayAdapter<Movie> {
     private Activity activity;
     private List<Movie> movies;
+    public static HashMap<Movie, Bitmap> moviesPoster;
     private static LayoutInflater inflater = null;
 
     public MovieAdapter (Activity activity, int textViewResourceId, List<Movie> movies) {
@@ -30,10 +35,17 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
             this.activity = activity;
             this.movies = movies;
 
+            moviesPoster = new HashMap<>();
+            for (Movie movie : movies) {
+                new DownloadImageTask(movie).execute("");
+            }
+
+            Thread.sleep(1000);
+
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -55,7 +67,10 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
         final ViewHolder holder;
+
+
         try {
+
             if (convertView == null) {
                 vi = inflater.inflate(R.layout.popular_movie, null);
                 holder = new ViewHolder();
@@ -64,19 +79,16 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
                 holder.imageView_poster = (ImageView) vi.findViewById(R.id.imageView_popularMoviePoster);
                 holder.textView_description = (TextView) vi.findViewById(R.id.textView_popularMovieDescription);
 
-
                 vi.setTag(holder);
             } else {
                 holder = (ViewHolder) vi.getTag();
             }
 
+            Movie movie = movies.get(position);
 
-
-            holder.textView_title.setText(movies.get(position).getTitle());
-            new DownloadImageTask(holder.imageView_poster)
-                    .execute(movies.get(position).getPosterUrl());
-            holder.textView_description.setText(movies.get(position).getDescription());
-
+            holder.textView_title.setText(movie.getTitle());
+            holder.imageView_poster.setImageBitmap(moviesPoster.get(movie));
+            holder.textView_description.setText(movie.getDescription());
 
         } catch (Exception e) {
 

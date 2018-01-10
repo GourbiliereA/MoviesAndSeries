@@ -15,7 +15,7 @@ public class Movie {
 
     public Movie(String title, String description, double rating, String posterUrl) {
         this.title = title;
-        this.description = description;
+        this.description = "      " + description;
         this.rating = rating;
         this.posterUrl = "http://image.tmdb.org/t/p/w185" + posterUrl;
     }

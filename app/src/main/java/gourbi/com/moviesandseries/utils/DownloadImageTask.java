@@ -7,32 +7,37 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import java.io.InputStream;
+import java.net.URL;
+
+import gourbi.com.moviesandseries.adapter.MovieAdapter;
+import gourbi.com.moviesandseries.model.Movie;
 
 /**
  * Created by Alex GOURBILIERE on 05/01/2018.
  */
 
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-    ImageView bmImage;
+    Movie movie;
 
-    public DownloadImageTask(ImageView bmImage) {
-        this.bmImage = bmImage;
+    public DownloadImageTask(Movie movie) {
+        this.movie = movie;
     }
 
     protected Bitmap doInBackground(String... urls) {
-        String urldisplay = urls[0];
-        Bitmap mIcon11 = null;
+        InputStream is = null;
+        Bitmap bm = null;
         try {
-            InputStream in = new java.net.URL(urldisplay).openStream();
-            mIcon11 = BitmapFactory.decodeStream(in);
+            is = (InputStream) new URL(movie.getPosterUrl()).getContent();
+            bm = BitmapFactory.decodeStream(is);
         } catch (Exception e) {
             Log.e("Error", e.getMessage());
             e.printStackTrace();
         }
-        return mIcon11;
+
+        return bm;
     }
 
     protected void onPostExecute(Bitmap result) {
-        bmImage.setImageBitmap(result);
+        MovieAdapter.moviesPoster.put(movie, result);
     }
 }

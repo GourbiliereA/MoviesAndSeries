@@ -7,7 +7,7 @@
     <string name="action_settings">Settings</string>
 
     <!-- TITLES -->
-    <string name="title_lastOutActivity">Last Movies Out</string>
+    <string name="title_lastOutActivity">Popular Movies</string>
 
     <!-- ERRORS -->
     <!-- Http -->
