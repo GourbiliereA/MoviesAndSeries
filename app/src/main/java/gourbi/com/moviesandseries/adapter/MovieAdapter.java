@@ -75,9 +75,9 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
                 vi = inflater.inflate(R.layout.popular_movie, null);
                 holder = new ViewHolder();
 
-                holder.textView_title = (TextView) vi.findViewById(R.id.textView_popularMovieTitle);
-                holder.imageView_poster = (ImageView) vi.findViewById(R.id.imageView_popularMoviePoster);
-                holder.textView_description = (TextView) vi.findViewById(R.id.textView_popularMovieDescription);
+                holder.textView_title = vi.findViewById(R.id.textView_popularMovieTitle);
+                holder.imageView_poster = vi.findViewById(R.id.imageView_popularMoviePoster);
+                holder.textView_description = vi.findViewById(R.id.textView_popularMovieDescription);
 
                 vi.setTag(holder);
             } else {
