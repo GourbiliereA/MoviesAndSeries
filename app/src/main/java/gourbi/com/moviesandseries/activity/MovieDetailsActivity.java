@@ -1,11 +1,7 @@
-package gourbi.com.moviesandseries;
+package gourbi.com.moviesandseries.activity;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.text.SpannableString;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,8 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,29 +18,23 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.util.ArrayList;
-import java.util.List;
+import gourbi.com.moviesandseries.R;
+import gourbi.com.moviesandseries.utils.DownloadImageTask;
 
-import gourbi.com.moviesandseries.adapter.MovieAdapter;
-import gourbi.com.moviesandseries.model.Movie;
+/**
+ * Created by Alex GOURBILIERE on 10/01/2018.
+ */
 
-public class PopularMoviesActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-
-    private final int NB_MAX_MOVIES = 20;
-
-    private ListView listViewLastMovies;
-    private List<Movie> popularMovies;
+public class MovieDetailsActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_popular_movies);
+        setContentView(R.layout.activity_movie_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -58,11 +47,8 @@ public class PopularMoviesActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        listViewLastMovies = findViewById(R.id.textView_lastMovies);
-        popularMovies = new ArrayList<>();
-
-        // Retrieving popualr movies to display them
-        getPopularMovies();
+        int movieId = this.getIntent().getIntExtra("movieId", 0);
+        getMovieDetails(movieId);
     }
 
     @Override
@@ -105,46 +91,29 @@ public class PopularMoviesActivity extends AppCompatActivity
         return true;
     }
 
-    private void getPopularMovies() {
+    private void getMovieDetails(int movieId) {
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-        final Context context = PopularMoviesActivity.this;
+        final Context context = MovieDetailsActivity.this;
 
         RequestParams params = new RequestParams();
         params.add("api_key", getString(R.string.api_key));
 
-        asyncHttpClient.get("https://api.themoviedb.org/3/movie/popular", params, new AsyncHttpResponseHandler() {
+        asyncHttpClient.get("https://api.themoviedb.org/3/movie/" + movieId, params, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(String response) {
                 try {
                     JSONObject jsonResponse = new JSONObject(response);
-                    if (jsonResponse.getInt("total_results") != 0) {
-                        // Some movies found
-                        popularMovies = new ArrayList<>();
-                        String[] moviesTitle = new String[NB_MAX_MOVIES];
-                        JSONArray results = jsonResponse.getJSONArray("results");
 
-                        for(int i=0; i<results.length(); i++){
-                            String title = results.getJSONObject(i).getString("title");
-                            String description = results.getJSONObject(i).getString("overview");
-                            Double rating = results.getJSONObject(i).getDouble("popularity");
-                            String posterPath = results.getJSONObject(i).getString("poster_path");
+                    TextView textViewMovieTitle = findViewById(R.id.textView_movieDetailsTitle);
+                    textViewMovieTitle.setText(jsonResponse.getString("title"));
 
-                            Movie movie = new Movie(title, description, rating, posterPath);
-                            popularMovies.add(movie);
-                            moviesTitle[i] = title;
+                    ImageView imageViewMoviePoster = findViewById(R.id.imageView_movieDetailsPoster);
+                    new DownloadImageTask(imageViewMoviePoster).execute("http://image.tmdb.org/t/p/w500" + jsonResponse.getString("poster_path"));
 
-                            if (i == NB_MAX_MOVIES - 1) {
-                                break;
-                            }
-                        }
+                    TextView textViewMovieOverview = findViewById(R.id.textView_movieDetailsOverview);
+                    textViewMovieOverview.setText("      " + jsonResponse.getString("overview"));
 
-                        MovieAdapter adapter = new MovieAdapter(PopularMoviesActivity.this, 0, popularMovies);
-                        listViewLastMovies.setAdapter(adapter);
-
-                    } else {
-                        // No movies found
-                    }
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!" + e.getMessage(), Toast.LENGTH_LONG).show();
                     e.printStackTrace();
@@ -154,11 +123,11 @@ public class PopularMoviesActivity extends AppCompatActivity
             @Override
             public void onFailure (int statusCode, Throwable error, String content) {
                 if (statusCode == 404) {
-                    Toast.makeText(PopularMoviesActivity.this, R.string.error_resourceNotFound, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MovieDetailsActivity.this, R.string.error_resourceNotFound, Toast.LENGTH_LONG).show();
                 } else if (statusCode == 500) {
-                    Toast.makeText(PopularMoviesActivity.this, R.string.error_serveurError, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MovieDetailsActivity.this, R.string.error_serveurError, Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(PopularMoviesActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(MovieDetailsActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });

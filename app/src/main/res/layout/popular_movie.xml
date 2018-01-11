@@ -28,7 +28,7 @@
             android:layout_below="@id/textView_popularMovieTitle"/>
 
         <TextView
-            android:id="@+id/textView_popularMovieDescription"
+            android:id="@+id/textView_popularMovieOverview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
