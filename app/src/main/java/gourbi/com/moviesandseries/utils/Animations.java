@@ -1,0 +1,36 @@
+package gourbi.com.moviesandseries.utils;
+
+import android.content.Context;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+
+import gourbi.com.moviesandseries.R;
+
+/**
+ * Created by Alex GOURBILIERE on 14/01/2018.
+ */
+
+public class Animations {
+    public static void slide_down(Context ctx, View v) {
+        Animation a = AnimationUtils.loadAnimation(ctx, R.anim.slide_down);
+        if (a != null) {
+            a.reset();
+            if (v != null) {
+                v.clearAnimation();
+                v.startAnimation(a);
+            }
+        }
+    }
+
+    public static void slide_up(Context ctx, View v) {
+        Animation a = AnimationUtils.loadAnimation(ctx, R.anim.slide_up);
+        if (a != null) {
+            a.reset();
+            if (v != null) {
+                v.clearAnimation();
+                v.startAnimation(a);
+            }
+        }
+    }
+}

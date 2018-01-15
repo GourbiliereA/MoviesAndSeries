@@ -15,7 +15,7 @@
 
         <activity
             android:name=".activity.PopularMoviesActivity"
-            android:label="@string/title_lastOutActivity"
+            android:label="@string/title_popularMovies"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,6 +26,16 @@
 
         <activity
             android:name=".activity.MovieDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activity.MovieActorsActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

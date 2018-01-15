@@ -6,8 +6,11 @@
 
     <string name="action_settings">Settings</string>
 
-    <!-- TITLES -->
-    <string name="title_lastOutActivity">Popular Movies</string>
+    <!-- PopularMoviesActivity -->
+    <string name="title_popularMovies">Popular Movies</string>
+
+    <!-- MovieDetailsActivity -->
+    <string name="title_movieDetails_actors">Actors</string>
 
     <!-- ERRORS -->
     <!-- Http -->

@@ -1,7 +1,6 @@
 package gourbi.com.moviesandseries.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,33 +11,36 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 
 import gourbi.com.moviesandseries.R;
-import gourbi.com.moviesandseries.utils.DownloadImageTask;
+import gourbi.com.moviesandseries.adapter.ActorAdapter;
+import gourbi.com.moviesandseries.model.Actor;
 
 /**
- * Created by Alex GOURBILIERE on 10/01/2018.
+ * Created by Alex GOURBILIERE on 15/01/2018.
  */
 
-public class MovieDetailsActivity extends AppCompatActivity
+public class MovieActorsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
+
+    ListView listView_actors;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_details);
+        setContentView(R.layout.activity_movie_actors);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -51,16 +53,10 @@ public class MovieDetailsActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        final int movieId = this.getIntent().getIntExtra("movieId", 0);
-        getMovieDetails(movieId);
+        int movieId = this.getIntent().getIntExtra("movieId", 0);
+        getMovieActors(movieId);
 
-        TextView textView_Actors = findViewById(R.id.textView_movieDetailsTitleActors);
-        textView_Actors.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                launchMovieActorsActivity(movieId);
-            }
-        });
+        listView_actors = findViewById(R.id.listView_movieActors);
     }
 
     @Override
@@ -103,31 +99,38 @@ public class MovieDetailsActivity extends AppCompatActivity
         return true;
     }
 
-    private void getMovieDetails(int movieId) {
+    private void getMovieActors(int movieId) {
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-        final Context context = MovieDetailsActivity.this;
+        final Context context = MovieActorsActivity.this;
 
         RequestParams params = new RequestParams();
         params.add("api_key", getString(R.string.api_key));
 
-        asyncHttpClient.get("https://api.themoviedb.org/3/movie/" + movieId, params, new AsyncHttpResponseHandler() {
+        asyncHttpClient.get("https://api.themoviedb.org/3/movie/" + movieId + "/credits", params, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(String response) {
                 try {
                     JSONObject jsonResponse = new JSONObject(response);
 
-                    TextView textViewMovieTitle = findViewById(R.id.textView_movieDetailsTitle);
-                    textViewMovieTitle.setText(jsonResponse.getString("title"));
+                    ArrayList<Actor> actors = new ArrayList<>();
+                    JSONArray results = jsonResponse.getJSONArray("cast");
 
-                    ImageView imageViewMoviePoster = findViewById(R.id.imageView_movieDetailsPoster);
-                    new DownloadImageTask(imageViewMoviePoster).execute("http://image.tmdb.org/t/p/w500" + jsonResponse.getString("poster_path"));
+                    for(int i=0; i<results.length(); i++){
+                        String name = results.getJSONObject(i).getString("name");
+                        String role = results.getJSONObject(i).getString("character");
 
-                    RatingBar ratingBarMovieRating = findViewById(R.id.ratingBar_movieDetailsRating);
-                    ratingBarMovieRating.setRating(new Float(jsonResponse.getDouble("vote_average") / 2));
+                        String photoPath = null;
+                        if (!results.getJSONObject(i).getString("profile_path").equals("null")) {
+                            photoPath = "https://image.tmdb.org/t/p/w185/" + results.getJSONObject(i).getString("profile_path");
+                        }
 
-                    TextView textViewMovieOverview = findViewById(R.id.textView_movieDetailsOverview);
-                    textViewMovieOverview.setText("      " + jsonResponse.getString("overview"));
+                        Actor actor = new Actor(name, photoPath, role);
+                        actors.add(actor);
+                    }
+
+                    ActorAdapter adapter = new ActorAdapter(MovieActorsActivity.this, 0, actors);
+                    listView_actors.setAdapter(adapter);
 
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!" + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -138,19 +141,13 @@ public class MovieDetailsActivity extends AppCompatActivity
             @Override
             public void onFailure (int statusCode, Throwable error, String content) {
                 if (statusCode == 404) {
-                    Toast.makeText(MovieDetailsActivity.this, R.string.error_resourceNotFound, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MovieActorsActivity.this, R.string.error_resourceNotFound, Toast.LENGTH_LONG).show();
                 } else if (statusCode == 500) {
-                    Toast.makeText(MovieDetailsActivity.this, R.string.error_serveurError, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MovieActorsActivity.this, R.string.error_serveurError, Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(MovieDetailsActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(MovieActorsActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });
-    }
-
-    public void launchMovieActorsActivity(int movieId){
-        Intent movieActorsIntent = new Intent(MovieDetailsActivity.this, MovieActorsActivity.class);
-        movieActorsIntent.putExtra("movieId", movieId);
-        MovieDetailsActivity.this.startActivity(movieActorsIntent);
     }
 }

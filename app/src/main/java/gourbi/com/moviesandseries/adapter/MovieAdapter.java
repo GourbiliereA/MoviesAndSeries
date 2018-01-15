@@ -17,7 +17,7 @@ import java.util.List;
 import gourbi.com.moviesandseries.R;
 import gourbi.com.moviesandseries.activity.MovieDetailsActivity;
 import gourbi.com.moviesandseries.model.Movie;
-import gourbi.com.moviesandseries.utils.DownloadImagesAdapterTask;
+import gourbi.com.moviesandseries.utils.MoviePosterDownloaderTask;
 
 /**
  * Created by Alex GOURBILIERE on 04/01/2018.
@@ -37,7 +37,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
             moviesPoster = new HashMap<>();
             for (Movie movie : movies) {
-                new DownloadImagesAdapterTask(movie).execute("");
+                new MoviePosterDownloaderTask(movie).execute("");
             }
 
             Thread.sleep(1000);
